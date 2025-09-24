@@ -84,9 +84,14 @@ class TeacherDashboard {
     }
 
     saveRoom(room) {
-        const systemData = this.getSystemData();
-        systemData.rooms[room.id] = room;
-        this.saveSystemData(systemData);
+        // Lưu vào simple storage
+        const saved = simpleStorage.saveRoom(room);
+        
+        if (saved) {
+            showNotification('Phòng đã được lưu thành công!', 'success');
+        } else {
+            showNotification('Lỗi khi lưu phòng', 'error');
+        }
         
         // Lưu current room
         localStorage.setItem('currentTeacherRoom', room.id);
@@ -95,8 +100,7 @@ class TeacherDashboard {
     loadExistingRoom() {
         const currentRoomId = localStorage.getItem('currentTeacherRoom');
         if (currentRoomId) {
-            const systemData = this.getSystemData();
-            const room = systemData.rooms[currentRoomId];
+            const room = simpleStorage.getRoom(currentRoomId);
             
             if (room && room.isActive) {
                 this.currentRoom = room;
@@ -277,12 +281,13 @@ class TeacherDashboard {
     }
 
     checkForNewAttendance() {
-        const systemData = this.getSystemData();
-        const room = systemData.rooms[this.currentRoom.id];
+        const room = simpleStorage.getRoom(this.currentRoom.id);
         
-        if (room && room.students.length !== this.students.length) {
+        if (room && room.students && room.students.length !== this.students.length) {
             this.students = room.students;
+            this.currentRoom = room; // Cập nhật current room
             this.updateStudentsList();
+            showNotification(`Có ${room.students.length - this.students.length} sinh viên mới điểm danh!`, 'info');
         }
     }
 
@@ -458,3 +463,12 @@ document.addEventListener('DOMContentLoaded', function() {
 window.receiveAttendanceData = function(studentData) {
     return teacherDashboard.addStudent(studentData);
 };
+
+// Global function cho share room
+function shareRoom() {
+    if (teacherDashboard.currentRoom) {
+        crossDeviceSync.shareRoom(teacherDashboard.currentRoom.id);
+    } else {
+        showNotification('Không có phòng nào để chia sẻ', 'error');
+    }
+}

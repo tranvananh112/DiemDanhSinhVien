@@ -6,6 +6,12 @@
     <title>Giao Diện Sinh Viên - Điểm Danh</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Face Recognition Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/dist/face-api.min.js"></script>
+    
+    <!-- Excel Processing Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="student-container">
@@ -34,6 +40,9 @@
                     </div>
                     <button type="submit" class="btn-join">
                         <i class="fas fa-sign-in-alt"></i> Tham Gia
+                    </button>
+                    <button type="button" class="btn-load-cloud" onclick="loadFromCloud()">
+                        <i class="fas fa-cloud-download-alt"></i> Tải Từ Cloud
                     </button>
                 </form>
             </div>
@@ -65,8 +74,25 @@
                         <label for="studentClass">Lớp:</label>
                         <input type="text" id="studentClass" placeholder="VD: IT01" required>
                     </div>
+                    <!-- Face Recognition Options -->
+                    <div class="face-recognition-options">
+                        <h4><i class="fas fa-face-smile"></i> Tùy chọn nhận diện khuôn mặt:</h4>
+                        <div class="face-options">
+                            <button type="button" class="btn-create-face" onclick="goToCreateFace()">
+                                <i class="fas fa-user-plus"></i> Tạo khuôn mặt
+                            </button>
+                            <button type="button" class="btn-use-face" onclick="goToUseFace()">
+                                <i class="fas fa-face-smile"></i> Sử dụng khuôn mặt có sẵn
+                            </button>
+                        </div>
+                        <p class="face-note">
+                            <i class="fas fa-info-circle"></i>
+                            Nếu lần đầu sử dụng, h��y chọn "Tạo khuôn mặt" để lưu ảnh gốc
+                        </p>
+                    </div>
+                    
                     <button type="submit" class="btn-continue">
-                        <i class="fas fa-arrow-right"></i> Tiếp Tục
+                        <i class="fas fa-arrow-right"></i> Tiếp Tục (Không dùng nhận diện)
                     </button>
                 </form>
             </div>
@@ -128,6 +154,54 @@
                 </div>
                 <h2>Điểm Danh Thành Công!</h2>
                 <p>Thông tin của bạn đã được gửi đến giáo viên</p>
+                
+                <!-- Phiếu điểm danh -->
+                <div class="attendance-ticket" id="attendanceTicket">
+                    <div class="ticket-header">
+                        <h3><i class="fas fa-ticket-alt"></i> Phiếu Điểm Danh</h3>
+                    </div>
+                    <div class="ticket-content">
+                        <div class="ticket-photo">
+                            <img id="ticketPhoto" src="" alt="Ảnh sinh viên">
+                        </div>
+                        <div class="ticket-info">
+                            <div class="info-row">
+                                <span class="label">STT:</span>
+                                <span class="value" id="ticketSTT">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">MSSV:</span>
+                                <span class="value" id="ticketMSSV">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Họ tên:</span>
+                                <span class="value" id="ticketName">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Lớp:</span>
+                                <span class="value" id="ticketClass">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Phòng:</span>
+                                <span class="value" id="ticketRoom">-</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Thời gian:</span>
+                                <span class="value" id="ticketTime">-</span>
+                            </div>
+                            <div class="info-row status-row">
+                                <span class="label">Trạng thái:</span>
+                                <span class="value status-success">
+                                    <i class="fas fa-check-circle"></i> Đã điểm danh
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ticket-footer">
+                        <p>Cảm ơn bạn đã tham gia lớp học!</p>
+                    </div>
+                </div>
+                
                 <div class="success-info">
                     <div class="info-item">
                         <i class="fas fa-clock"></i>
@@ -150,6 +224,12 @@
         </div>
     </div>
 
-    <script src="js/student.js"></script>
+    <!-- App Scripts -->
+    <script src="js/simple-storage.js"></script>
+    <script src="js/cross-device-sync.js"></script>
+    <script src="js/face-recognition.js"></script>
+    <script src="js/cross-device-storage.js"></script>
+    <script src="js/excel-handler.js"></script>
+    <script src="js/student-enhanced.js"></script>
 </body>
 </html>

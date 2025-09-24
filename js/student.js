@@ -51,31 +51,36 @@ class StudentAttendance {
             return;
         }
 
-        // Kiểm tra phòng có tồn tại không
-        const systemData = this.getSystemData();
-        const room = systemData.rooms[roomId];
+        try {
+            // Kiểm tra phòng trong localStorage
+            const room = simpleStorage.getRoom(roomId);
 
-        if (!room) {
-            showNotification('Không tìm thấy phòng với ID này', 'error');
-            return;
+            if (!room) {
+                showNotification('Không tìm thấy phòng với ID này', 'error');
+                return;
+            }
+
+            if (!room.isActive) {
+                showNotification('Phòng này đã được đóng', 'error');
+                return;
+            }
+
+            // Lưu thông tin phòng
+            this.roomData = room;
+            
+            // Hiển thị thông tin phòng
+            document.getElementById('joinedRoomInfo').textContent = 
+                `Phòng: ${room.name} - ${room.subject}`;
+
+            // Chuyển sang bước 2
+            this.goToStep(2);
+            
+            showNotification('Tham gia phòng thành công!', 'success');
+
+        } catch (error) {
+            console.error('Error joining room:', error);
+            showNotification('Lỗi khi tham gia phòng. Vui lòng thử lại.', 'error');
         }
-
-        if (!room.isActive) {
-            showNotification('Phòng này đã được đóng', 'error');
-            return;
-        }
-
-        // Lưu thông tin phòng
-        this.roomData = room;
-        
-        // Hiển thị thông tin phòng
-        document.getElementById('joinedRoomInfo').textContent = 
-            `Phòng: ${room.name} - ${room.subject}`;
-
-        // Chuyển sang bước 2
-        this.goToStep(2);
-        
-        showNotification('Tham gia phòng thành công!', 'success');
     }
 
     saveStudentInfo() {
@@ -244,8 +249,8 @@ class StudentAttendance {
                 timestamp: Date.now()
             };
 
-            // Lưu vào localStorage
-            const result = this.saveAttendanceData(attendanceData);
+            // Lưu dữ liệu (await để đợi kết quả)
+            const result = await this.saveAttendanceData(attendanceData);
             
             if (result.success) {
                 // Hiển thị thông tin thành công
@@ -275,31 +280,16 @@ class StudentAttendance {
 
     saveAttendanceData(attendanceData) {
         try {
-            // Lấy dữ liệu hệ thống
-            const systemData = this.getSystemData();
-            const room = systemData.rooms[this.roomData.id];
-
-            if (!room) {
-                return { success: false, message: 'Phòng không tồn tại' };
+            // Sử dụng simple storage để lưu dữ liệu
+            const result = simpleStorage.addStudentToRoom(this.roomData.id, attendanceData);
+            
+            if (result.success) {
+                // Cập nhật roomData local để hiển thị
+                this.roomData = simpleStorage.getRoom(this.roomData.id);
+                showNotification('Dữ liệu đã được lưu thành công!', 'success');
             }
-
-            if (!room.isActive) {
-                return { success: false, message: 'Phòng đã được đóng' };
-            }
-
-            // Kiểm tra trùng lặp
-            const existingStudent = room.students.find(s => s.studentId === attendanceData.studentId);
-            if (existingStudent) {
-                return { success: false, message: 'Bạn đã điểm danh rồi!' };
-            }
-
-            // Thêm sinh viên vào phòng
-            room.students.push(attendanceData);
-
-            // Lưu lại dữ liệu
-            this.saveSystemData(systemData);
-
-            return { success: true, message: 'Điểm danh thành công!' };
+            
+            return result;
 
         } catch (error) {
             console.error('Lỗi khi lưu dữ liệu:', error);
@@ -456,3 +446,16 @@ document.addEventListener('DOMContentLoaded', function() {
 window.addEventListener('beforeunload', function() {
     studentAttendance.stopCamera();
 });
+
+// Global function cho load from cloud
+function loadFromCloud() {
+    crossDeviceSync.loadDataFromCloud().then(success => {
+        if (success) {
+            showNotification('Dữ liệu đã được tải từ cloud thành công!', 'success');
+            // Refresh để hiển thị dữ liệu mới
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }
+    });
+}

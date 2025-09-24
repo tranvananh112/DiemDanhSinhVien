@@ -6,6 +6,12 @@
     <title>Giao Diện Giáo Viên - Điểm Danh</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Face Recognition Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api@latest/dist/face-api.min.js"></script>
+    
+    <!-- Excel Processing Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
     <div class="teacher-container">
@@ -37,6 +43,26 @@
                         <label for="subject">Môn Học:</label>
                         <input type="text" id="subject" placeholder="VD: Lập trình Web" required>
                     </div>
+                    
+                    <!-- Import Excel Section -->
+                    <div class="form-group excel-import-section">
+                        <label>Danh Sách Sinh Viên:</label>
+                        <div class="import-options">
+                            <button type="button" class="btn-import-excel" onclick="triggerExcelImport()">
+                                <i class="fas fa-file-excel"></i> Nhập từ Excel
+                            </button>
+                            <button type="button" class="btn-download-template" onclick="downloadTemplate()">
+                                <i class="fas fa-download"></i> Tải Template
+                            </button>
+                        </div>
+                        <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleExcelImport(event)">
+                        <div id="importStatus" class="import-status" style="display: none;"></div>
+                        <div id="studentPreview" class="student-preview" style="display: none;">
+                            <h4>Danh sách sinh viên đã nhập:</h4>
+                            <div class="preview-list" id="previewList"></div>
+                        </div>
+                    </div>
+                    
                     <button type="submit" class="btn-create">
                         <i class="fas fa-plus"></i> Tạo Phòng
                     </button>
@@ -66,9 +92,17 @@
                             <span>Thời gian: <strong id="roomTime">--:--</strong></span>
                         </div>
                     </div>
-                    <button class="btn-close-room" onclick="closeRoom()">
-                        <i class="fas fa-times-circle"></i> Đóng Phòng
-                    </button>
+                    <div class="room-actions">
+                        <button class="btn-qr-room" onclick="generateQRCode()">
+                            <i class="fas fa-qrcode"></i> Tạo QR Code
+                        </button>
+                        <button class="btn-share-room" onclick="shareRoom()">
+                            <i class="fas fa-share-alt"></i> Chia Sẻ Cloud
+                        </button>
+                        <button class="btn-close-room" onclick="closeRoom()">
+                            <i class="fas fa-times-circle"></i> Đóng Phòng
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -123,6 +157,12 @@
         </div>
     </div>
 
-    <script src="js/teacher.js"></script>
+    <!-- App Scripts -->
+    <script src="js/simple-storage.js"></script>
+    <script src="js/cross-device-sync.js"></script>
+    <script src="js/cross-device-storage.js"></script>
+    <script src="js/face-recognition.js"></script>
+    <script src="js/excel-handler.js"></script>
+    <script src="js/teacher-enhanced.js"></script>
 </body>
 </html>
