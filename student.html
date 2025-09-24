@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao Diện Sinh Viên - Điểm Danh</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="student-container">
+        <header class="student-header">
+            <div class="header-left">
+                <h1><i class="fas fa-user-graduate"></i> Điểm Danh Sinh Viên</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn-back" onclick="goHome()">
+                    <i class="fas fa-home"></i> Trang Chủ
+                </button>
+            </div>
+        </header>
+
+        <!-- Bước 1: Nhập ID Phòng -->
+        <div class="step-container" id="step1">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2><i class="fas fa-door-open"></i> Tham Gia Phòng</h2>
+                    <p>Nhập ID phòng do giáo viên cung cấp</p>
+                </div>
+                <form id="joinRoomForm" class="join-room-form">
+                    <div class="form-group">
+                        <label for="roomId">ID Phòng:</label>
+                        <input type="text" id="roomId" placeholder="Nhập ID phòng (6 ký tự)" maxlength="6" required>
+                    </div>
+                    <button type="submit" class="btn-join">
+                        <i class="fas fa-sign-in-alt"></i> Tham Gia
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bước 2: Nhập Thông Tin -->
+        <div class="step-container" id="step2" style="display: none;">
+            <div class="step-card">
+                <div class="step-header">
+                    <h2><i class="fas fa-user-edit"></i> Thông Tin Sinh Viên</h2>
+                    <p>Điền đầy đủ thông tin của bạn</p>
+                </div>
+                <div class="room-info-display">
+                    <div class="room-badge">
+                        <i class="fas fa-door-open"></i>
+                        <span id="joinedRoomInfo">Phòng: Loading...</span>
+                    </div>
+                </div>
+                <form id="studentInfoForm" class="student-info-form">
+                    <div class="form-group">
+                        <label for="studentName">Họ và Tên:</label>
+                        <input type="text" id="studentName" placeholder="VD: Nguyễn Văn A" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentId">Mã Số Sinh Viên:</label>
+                        <input type="text" id="studentId" placeholder="VD: 2021001234" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studentClass">Lớp:</label>
+                        <input type="text" id="studentClass" placeholder="VD: IT01" required>
+                    </div>
+                    <button type="submit" class="btn-continue">
+                        <i class="fas fa-arrow-right"></i> Tiếp Tục
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Bước 3: Chụp Ảnh -->
+        <div class="step-container" id="step3" style="display: none;">
+            <div class="step-card camera-card">
+                <div class="step-header">
+                    <h2><i class="fas fa-camera"></i> Chụp Ảnh Điểm Danh</h2>
+                    <p>Đặt khuôn mặt vào khung hình và chụp ảnh</p>
+                </div>
+                
+                <div class="camera-container">
+                    <div class="camera-preview">
+                        <video id="video" autoplay muted></video>
+                        <canvas id="canvas" style="display: none;"></canvas>
+                        <div class="camera-overlay">
+                            <div class="face-guide">
+                                <div class="face-circle"></div>
+                                <p>Đặt khuôn mặt vào vòng tròn</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="camera-controls">
+                        <button id="startCamera" class="btn-camera" onclick="startCamera()">
+                            <i class="fas fa-video"></i> Bật Camera
+                        </button>
+                        <button id="capturePhoto" class="btn-capture" onclick="capturePhoto()" style="display: none;">
+                            <i class="fas fa-camera"></i> Chụp Ảnh
+                        </button>
+                        <button id="retakePhoto" class="btn-retake" onclick="retakePhoto()" style="display: none;">
+                            <i class="fas fa-redo"></i> Chụp Lại
+                        </button>
+                    </div>
+                </div>
+
+                <div class="photo-preview" id="photoPreview" style="display: none;">
+                    <h4>Ảnh đã chụp:</h4>
+                    <img id="capturedImage" src="" alt="Ảnh đã chụp">
+                    <div class="student-info-summary">
+                        <p><strong>Họ tên:</strong> <span id="summaryName"></span></p>
+                        <p><strong>MSSV:</strong> <span id="summaryId"></span></p>
+                        <p><strong>Lớp:</strong> <span id="summaryClass"></span></p>
+                    </div>
+                    <button class="btn-submit" onclick="submitAttendance()">
+                        <i class="fas fa-check"></i> Xác Nhận Điểm Danh
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bước 4: Thành Công -->
+        <div class="step-container" id="step4" style="display: none;">
+            <div class="step-card success-card">
+                <div class="success-animation">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h2>Điểm Danh Thành Công!</h2>
+                <p>Thông tin của bạn đã được gửi đến giáo viên</p>
+                <div class="success-info">
+                    <div class="info-item">
+                        <i class="fas fa-clock"></i>
+                        <span>Thời gian: <strong id="attendanceTime"></strong></span>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-door-open"></i>
+                        <span>Phòng: <strong id="attendanceRoom"></strong></span>
+                    </div>
+                </div>
+                <div class="success-actions">
+                    <button class="btn-new-attendance" onclick="newAttendance()">
+                        <i class="fas fa-plus"></i> Điểm Danh Khác
+                    </button>
+                    <button class="btn-home" onclick="goHome()">
+                        <i class="fas fa-home"></i> Trang Chủ
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/student.js"></script>
+</body>
+</html>

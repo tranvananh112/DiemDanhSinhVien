@@ -3,39 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Máy Tính Đơn Giản</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Hệ Thống Điểm Danh Sinh Viên</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="calculator">
-        <div class="display">
-            <input type="text" id="display" readonly>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-graduation-cap"></i> Hệ Thống Điểm Danh</h1>
+            <p>Chọn vai trò của bạn để tiếp tục</p>
+        </header>
+
+        <div class="role-selection">
+            <div class="role-card teacher-card" onclick="selectRole('teacher')">
+                <div class="role-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3>Giáo Viên</h3>
+                <p>Tạo phòng điểm danh và quản lý sinh viên</p>
+                <div class="role-features">
+                    <span><i class="fas fa-plus-circle"></i> Tạo phòng</span>
+                    <span><i class="fas fa-users"></i> Quản lý SV</span>
+                    <span><i class="fas fa-chart-bar"></i> Thống kê</span>
+                </div>
+            </div>
+
+            <div class="role-card student-card" onclick="selectRole('student')">
+                <div class="role-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3>Sinh Viên</h3>
+                <p>Tham gia phòng điểm danh bằng ID phòng</p>
+                <div class="role-features">
+                    <span><i class="fas fa-camera"></i> Chụp ảnh</span>
+                    <span><i class="fas fa-id-card"></i> Điểm danh</span>
+                    <span><i class="fas fa-history"></i> Lịch sử</span>
+                </div>
+            </div>
         </div>
-        <div class="buttons">
-            <button class="btn clear" onclick="clearDisplay()">C</button>
-            <button class="btn clear" onclick="deleteLast()">⌫</button>
-            <button class="btn operator" onclick="appendToDisplay('/')">/</button>
-            <button class="btn operator" onclick="appendToDisplay('*')">×</button>
-            
-            <button class="btn number" onclick="appendToDisplay('7')">7</button>
-            <button class="btn number" onclick="appendToDisplay('8')">8</button>
-            <button class="btn number" onclick="appendToDisplay('9')">9</button>
-            <button class="btn operator" onclick="appendToDisplay('-')">-</button>
-            
-            <button class="btn number" onclick="appendToDisplay('4')">4</button>
-            <button class="btn number" onclick="appendToDisplay('5')">5</button>
-            <button class="btn number" onclick="appendToDisplay('6')">6</button>
-            <button class="btn operator" onclick="appendToDisplay('+')">+</button>
-            
-            <button class="btn number" onclick="appendToDisplay('1')">1</button>
-            <button class="btn number" onclick="appendToDisplay('2')">2</button>
-            <button class="btn number" onclick="appendToDisplay('3')">3</button>
-            <button class="btn equals" onclick="calculate()" rowspan="2">=</button>
-            
-            <button class="btn number zero" onclick="appendToDisplay('0')">0</button>
-            <button class="btn number" onclick="appendToDisplay('.')">.</button>
+
+        <div class="recent-activities">
+            <h3><i class="fas fa-clock"></i> Hoạt Động Gần Đây</h3>
+            <div id="recentActivities" class="activities-list">
+                <div class="activity-item">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Chưa có hoạt động nào</span>
+                </div>
+            </div>
         </div>
+
+        <footer class="footer">
+            <p>&copy; 2024 Hệ Thống Điểm Danh Sinh Viên</p>
+        </footer>
     </div>
-    <script src="script.js"></script>
+
+    <script src="js/main.js"></script>
 </body>
 </html>
